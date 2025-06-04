@@ -13,6 +13,7 @@ POSTS = [
 
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
+
     return jsonify(POSTS)
 
 
@@ -94,7 +95,7 @@ def update_post(id):
                     post["title"] = updating_post["title"]
                 if "content" in updating_post:
                     post["content"] = updating_post["content"]
-                return jsonify(updating_post), 200
+                return jsonify(post), 200
         return jsonify({"error": "Post not found"}), 404
 
 
