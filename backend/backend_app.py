@@ -1,5 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+import json
 
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
@@ -13,6 +14,43 @@ POSTS = [
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
     return jsonify(POSTS)
+
+
+def invalid_post(post):
+    """
+    checking if required fields are present, if not, return error msg
+    """
+    if "title" not in post and "content" not in post:
+        return jsonify({"error": "Missing post title and content"}), 400
+    if "title" not in post:
+        return jsonify({"error": "Missing post title"}), 400
+    if "content" not in post:
+        return jsonify({"error": "Missing post content"}), 400
+    else:
+        return None
+
+
+@app.route('/api/posts', methods=['POST'])
+def add_new_post():
+    """
+    add a new blog post
+    """
+    new_post = request.get_json()
+
+    # validate the new post's info
+    if invalid_post(new_post):
+        return invalid_post(new_post)
+
+    # generate a new post id and add the new post to our database
+    if len(POSTS) == 0:
+        post_id = 1
+    else:
+        # get the id of the latest post and increment it by 1
+        post_id = max(post["id"] for post in POSTS) + 1
+        new_post["id"] = post_id
+        POSTS.append(new_post)
+
+    return jsonify(POSTS), 201
 
 
 if __name__ == '__main__':
