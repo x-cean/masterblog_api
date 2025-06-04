@@ -13,7 +13,28 @@ POSTS = [
 
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
-
+    """
+    list all posts
+    optional: sorting by title or content, asc or desc
+    """
+    # check whether there's a sort query
+    sort_query = request.args.get("sort")
+    direction = request.args.get("direction")
+    # validate the queries
+    if sort_query and (sort_query not in ["title", "content"]):
+            return jsonify({"error": "Invalid sort or direction"}), 400
+    if direction and (direction not in ["asc", "desc"]):
+            return jsonify({"error": "Invalid direction"}), 400
+    # sort
+    if sort_query:
+        posts = POSTS
+        sorted_posts = sorted(POSTS, key=lambda post: post[sort_query], reverse=direction == "desc")
+        return jsonify(sorted_posts)
+    # if just direction and it is descending: reverse of the database order
+    elif direction == "desc":
+        posts = POSTS[::-1]
+        return jsonify(posts)
+    # otherwise, just listing in ascending
     return jsonify(POSTS)
 
 
@@ -98,6 +119,30 @@ def update_post(id):
                 return jsonify(post), 200
         return jsonify({"error": "Post not found"}), 404
 
+
+@app.route('/api/posts/search', methods=['GET'])
+def search_posts():
+    """
+    search posts by title or/and content, if no match was found, return empty list
+    """
+    # check whether there's a search query
+    title = request.args.get("title")
+    content = request.args.get("content")
+    # if yes, search the database and return searched results
+    if title or content:
+        search_posts_results = []
+        for post in POSTS:
+            if ((title and (title.lower() in post["title"].lower())) or
+                    (content and (content.lower() in post["content"].lower()))):
+                search_posts_results.append(post)
+        return jsonify(search_posts_results), 200
+    # if no query parameter was provided, display all posts
+    return jsonify(POSTS), 200
+
+"""Question: Hi i tested by sending 2 content queries in one get request,
+turns out that the api does not think it's error and 
+only recognized the first content query. 
+Is this in general how it works? Thank you and best regards!"""
 
 
 if __name__ == '__main__':
