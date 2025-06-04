@@ -22,7 +22,7 @@ def get_posts():
     direction = request.args.get("direction")
     # validate the queries
     if sort_query and (sort_query not in ["title", "content"]):
-            return jsonify({"error": "Invalid sort or direction"}), 400
+            return jsonify({"error": "Invalid sort"}), 400
     if direction and (direction not in ["asc", "desc"]):
             return jsonify({"error": "Invalid direction"}), 400
     # sort
@@ -96,7 +96,7 @@ def delete_post(id):
         return jsonify({"error": "Post not found"}), 404
     else:
         POSTS.remove(post)
-        return jsonify({"message": "Post with id <id> has been deleted successfully."}), 200
+        return jsonify({"message": f"Post with id {id} has been deleted successfully."}), 200
 
 
 @app.route('/api/posts/<int:id>', methods=['PUT'])
