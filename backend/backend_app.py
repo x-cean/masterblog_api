@@ -69,10 +69,10 @@ def add_new_post():
     else:
         # get the id of the latest post and increment it by 1
         post_id = max(post["id"] for post in POSTS) + 1
-        new_post["id"] = post_id
-        POSTS.append(new_post)
+    new_post["id"] = post_id
+    POSTS.append(new_post)
 
-    return jsonify(POSTS), 201
+    return jsonify(new_post), 201
 
 
 def find_post_by_id(post_id):
