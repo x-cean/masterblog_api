@@ -139,10 +139,19 @@ def search_posts():
     # if no query parameter was provided, display all posts
     return jsonify(POSTS), 200
 
-"""Question: Hi i tested by sending 2 content queries in one get request,
+"""
+Question: Hi i tested by sending 2 content queries in one get request,
 turns out that the api does not think it's error and 
 only recognized the first content query. 
-Is this in general how it works? Thank you and best regards!"""
+Is this in general how it works? Thank you and best regards!
+
+Answer: Yes, this is standard HTTP behavior. 
+When you have multiple parameters with the same name, like "?content=first&content=second", 
+request.args.get() returns only the first value. This is normal and expected behavior.
+
+If we need to multiple values for the same parameter, we can use request.args.getlist(‘content’) 
+which returns a list of all values.
+"""
 
 
 if __name__ == '__main__':
