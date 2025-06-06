@@ -69,6 +69,8 @@ def add_new_post():
     else:
         # get the id of the latest post and increment it by 1
         post_id = max(post["id"] for post in POSTS) + 1
+
+    # asign id and update database by appending new post
     new_post["id"] = post_id
     POSTS.append(new_post)
 
